@@ -1,9 +1,52 @@
 import React from 'react';
+import {
+  MdArrowDownward,
+  MdArrowUpward,
+  MdDashboard,
+  MdExitToApp,
+} from 'react-icons/md';
 
-import { Container } from './styles';
+import srcLogoImg from '../../assets/logo.svg';
+import {
+  Container,
+  ContainerGrid,
+  Header,
+  LogoImg,
+  MenuContainer,
+  MenuItemLink,
+  Title,
+} from './styles';
 
 const Aside: React.FC = () => {
-  return <Container>Aside</Container>;
+  return (
+    <Container>
+      <ContainerGrid>
+        <Header>
+          <LogoImg src={srcLogoImg} alt={'Logo Imagem'} />
+          <Title>Minha Carteira</Title>
+        </Header>
+
+        <MenuContainer>
+          <MenuItemLink href={'#'}>
+            <MdDashboard />
+            Dashboard
+          </MenuItemLink>
+          <MenuItemLink href={'#'}>
+            <MdArrowUpward />
+            Entradas
+          </MenuItemLink>
+          <MenuItemLink href={'#'}>
+            <MdArrowDownward />
+            Saídas
+          </MenuItemLink>
+          <MenuItemLink href={'#'}>
+            <MdExitToApp />
+            Logout
+          </MenuItemLink>
+        </MenuContainer>
+      </ContainerGrid>
+    </Container>
+  );
 };
 
 export default Aside;
