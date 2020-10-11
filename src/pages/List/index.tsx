@@ -18,7 +18,6 @@ const List: React.FC = () => {
           .map((_, idx) => (
             <HistoryFinanceCard
               key={idx}
-              cardColor='#313862'
               tagColor='#E44C4E'
               title='Conta de Luz'
               subtitle='11/10/2020'
