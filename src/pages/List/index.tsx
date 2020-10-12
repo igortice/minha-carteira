@@ -1,9 +1,14 @@
-import React, { useMemo } from 'react';
+import { Container, Content, Filters } from './styles';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import ContentHeader from '../../components/ContentHeader';
 import HistoryFinanceCard from '../../components/HistoryFinanceCard';
 import SelectInput from '../../components/SelectInput';
-import { Container, Content, Filters } from './styles';
+import _ from 'lodash';
+import expenses from '../../mocks/expenses';
+import formatCurrency from '../../utils/formatCurrency';
+import gains from '../../mocks/gains';
+import moment from 'moment';
 
 const MONTHS = [
   { value: 7, label: 'Julho' },
@@ -21,8 +26,35 @@ interface IRouteParams {
   match: { params: { type: string } };
 }
 
+interface IData {
+  id: string;
+  description: string;
+  amountFormatted: string;
+  frequency: string;
+  dataFormatted: string;
+  tagColor: string;
+}
+
 const List: React.FC<IRouteParams> = ({ match }) => {
   const { type } = match.params;
+
+  const [data, setData] = useState<IData[]>([]);
+  const listaData = useMemo(
+    () => (type === 'entry-balance' ? gains : expenses),
+    [type]
+  );
+  useEffect(() => {
+    // moment(item.date, 'DD/MM/YYYY').toString()
+    const response = listaData.map((item) => ({
+      id: _.uniqueId(),
+      description: item.description,
+      amountFormatted: formatCurrency(Number(item.amount)),
+      frequency: item.frequency,
+      dataFormatted: moment(item.date).format('DD/MM/YYYY'),
+      tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
+    }));
+    setData(response);
+  }, [listaData]);
 
   const balanceParams = useMemo(() => {
     return type === 'entry-balance'
@@ -50,17 +82,15 @@ const List: React.FC<IRouteParams> = ({ match }) => {
       </Filters>
 
       <Content>
-        {Array(10)
-          .fill(null)
-          .map((_, idx) => (
-            <HistoryFinanceCard
-              key={idx}
-              tagColor='#E44C4E'
-              title='Conta de Luz'
-              subtitle='11/10/2020'
-              amount='R$ 130,00'
-            />
-          ))}
+        {data.map((item) => (
+          <HistoryFinanceCard
+            key={item.id}
+            tagColor={item.tagColor}
+            title={item.description}
+            subtitle={item.dataFormatted}
+            amount={item.amountFormatted}
+          />
+        ))}
       </Content>
     </Container>
   );
