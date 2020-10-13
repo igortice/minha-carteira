@@ -9,18 +9,7 @@ import expenses from '../../mocks/expenses';
 import formatCurrency from '../../utils/formatCurrency';
 import gains from '../../mocks/gains';
 import moment from 'moment';
-
-const MONTHS = [
-  { value: 7, label: 'Julho' },
-  { value: 8, label: 'Agosto' },
-  { value: 9, label: 'SETEMBRO' },
-];
-
-const YEARS = [
-  { value: 2018, label: 2018 },
-  { value: 2019, label: 2019 },
-  { value: 2020, label: 2020 },
-];
+import months from '../../utils/months';
 
 interface IRouteParams {
   match: { params: { type: string } };
@@ -36,31 +25,67 @@ interface IData {
 }
 
 const List: React.FC<IRouteParams> = ({ match }) => {
+  const [monthSelected, setMonthSelected] = useState<string>(
+    moment().month().toString()
+  );
+  const [yearSelected, setYearSelected] = useState<string>(
+    moment().year().toString()
+  );
+  const [data, setData] = useState<IData[]>([]);
+  const [selectedFrequency, setSelectedFrequency] = useState<string[]>([]);
+
   const { type } = match.params;
 
-  const [data, setData] = useState<IData[]>([]);
   const listaData = useMemo(
     () => (type === 'entry-balance' ? gains : expenses),
     [type]
   );
-  useEffect(() => {
-    // moment(item.date, 'DD/MM/YYYY').toString()
-    const response = listaData.map((item) => ({
-      id: _.uniqueId(),
-      description: item.description,
-      amountFormatted: formatCurrency(Number(item.amount)),
-      frequency: item.frequency,
-      dataFormatted: moment(item.date).format('DD/MM/YYYY'),
-      tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
-    }));
-    setData(response);
+  const meses = useMemo(
+    () => months.map((ele, idx) => ({ value: idx, label: ele })),
+    []
+  );
+  const uniqueYears = useMemo(() => {
+    return _.uniq(
+      listaData.map((item) => moment(item.date).year())
+    ).map((ele) => ({ value: ele, label: ele }));
   }, [listaData]);
-
   const balanceParams = useMemo(() => {
     return type === 'entry-balance'
       ? { title: 'Entrada', lineColor: '#F7931B' }
       : { title: 'Saída', lineColor: '#E44C4E' };
   }, [type]);
+
+  useEffect(() => {
+    const filteredData = listaData.filter((ele) => {
+      return (
+        moment(ele.date).month().toString() === monthSelected &&
+        moment(ele.date).year().toString() === yearSelected
+      );
+    });
+
+    const response = filteredData.map((item) => {
+      return {
+        id: _.uniqueId(),
+        description: item.description,
+        amountFormatted: formatCurrency(Number(item.amount)),
+        frequency: item.frequency,
+        dataFormatted: moment(item.date).format('DD/MM/YYYY'),
+        tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
+      };
+    });
+    setData(response);
+  }, [listaData, monthSelected, yearSelected]);
+
+  const handleFrequencyClick = (frequency: string): void => {
+    const selected = selectedFrequency.findIndex((item) => item === frequency);
+
+    if(selected >= 0) {
+      console.log('já selecionado');
+    } else {
+      console.log('now');
+      setSelectedFrequency([frequency])
+    }
+  };
 
   return (
     <Container>
@@ -68,15 +93,31 @@ const List: React.FC<IRouteParams> = ({ match }) => {
         title={balanceParams.title}
         lineColor={balanceParams.lineColor}
       >
-        <SelectInput options={MONTHS} />
-        <SelectInput options={YEARS} />
+        <SelectInput
+          options={meses}
+          defaultValue={monthSelected}
+          onChange={(e) => setMonthSelected(e.target.value)}
+        />
+        <SelectInput
+          options={uniqueYears}
+          defaultValue={yearSelected}
+          onChange={(e) => setYearSelected(e.target.value)}
+        />
       </ContentHeader>
 
       <Filters>
-        <button type='button' className='tag-filter tf-recorrente'>
+        <button
+          type='button'
+          className='tag-filter tf-recorrente'
+          onClick={() => handleFrequencyClick('recorrente')}
+        >
           Recorrentes
         </button>
-        <button type='button' className='tag-filter tf-eventual'>
+        <button
+          type='button'
+          className='tag-filter tf-eventual'
+          onClick={() => handleFrequencyClick('eventual')}
+        >
           Eventuais
         </button>
       </Filters>
