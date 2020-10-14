@@ -35,7 +35,7 @@ const List: React.FC<IRouteParams> = ({ match }) => {
   const pageData = useMemo(
     () =>
       type === 'entry-balance'
-        ? { title: 'Entrada', lineColor: '#F7931B', data: gains }
+        ? { title: 'Entrada', lineColor: '#4E41F0', data: gains }
         : { title: 'Saída', lineColor: '#E44C4E', data: expenses },
     [type]
   );
