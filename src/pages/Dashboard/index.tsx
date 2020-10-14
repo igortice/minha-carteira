@@ -1,8 +1,9 @@
+import { Container, Content } from './styles';
 import React, { useMemo, useState } from 'react';
 
-import { Container } from './styles';
 import ContentHeader from '../../components/ContentHeader';
 import SelectInput from '../../components/SelectInput';
+import WalletCard from '../../components/WalletCard';
 import _ from 'lodash';
 import expenses from '../../mocks/expenses';
 import gains from '../../mocks/gains';
@@ -30,6 +31,29 @@ const Dashboard: React.FC = () => {
           onChange={(e) => setYearSelected(+e.target.value)}
         />
       </ContentHeader>
+      <Content>
+        <WalletCard
+          title={'saldo'}
+          amount={150.0}
+          footerLabel={'atualizado com bases na entrada e saída'}
+          icon={'dollar'}
+          color={'#4E41F0'}
+        />
+        <WalletCard
+          title={'entradas'}
+          amount={5000.0}
+          footerLabel={'atualizado com bases na entrada e saída'}
+          icon={'arrowUp'}
+          color={'#F7931B'}
+        />
+        <WalletCard
+          title={'saída'}
+          amount={4850.0}
+          footerLabel={'atualizado com bases na entrada e saída'}
+          icon={'arrowDown'}
+          color={'#E44C4E'}
+        />
+      </Content>
     </Container>
   );
 };
