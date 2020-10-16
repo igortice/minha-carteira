@@ -2,11 +2,13 @@ import { Container, Content } from './styles';
 import React, { useMemo, useState } from 'react';
 
 import ContentHeader from '../../components/ContentHeader';
+import MessageBox from '../../components/MessageBox';
 import SelectInput from '../../components/SelectInput';
 import WalletCard from '../../components/WalletCard';
 import _ from 'lodash';
 import expenses from '../../mocks/expenses';
 import gains from '../../mocks/gains';
+import happyImg from '../../assets/happy.svg';
 import moment from 'moment';
 import months from '../../utils/months';
 
@@ -52,6 +54,12 @@ const Dashboard: React.FC = () => {
           footerLabel={'atualizado com bases na entrada e saída'}
           icon={'arrowDown'}
           color={'#E44C4E'}
+        />
+        <MessageBox
+          title={'Muito bem'}
+          description={'Sua carteira está positiva.'}
+          footerText={'Continue assim.'}
+          icon={happyImg}
         />
       </Content>
     </Container>
