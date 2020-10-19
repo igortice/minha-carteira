@@ -11,6 +11,7 @@ import gains from '../../mocks/gains';
 import happyImg from '../../assets/happy.svg';
 import moment from 'moment';
 import months from '../../utils/months';
+import sadImg from '../../assets/sad.svg';
 
 const Dashboard: React.FC = () => {
   const [monthSelected, setMonthSelected] = useState(moment().month());
@@ -23,6 +24,54 @@ const Dashboard: React.FC = () => {
       label: ele,
     }));
   }, []);
+
+  const totalExpenses = useMemo(() => {
+    return _.sumBy(expenses, (item) => {
+      const month = moment(item.date).month();
+      const year = moment(item.date).year();
+
+      return (month === monthSelected && year === yearSelected && Number(item.amount)) || 0;
+    });
+  }, [monthSelected, yearSelected]);
+
+  const totalGains = useMemo(() => {
+    return _.sumBy(gains, (item) => {
+      const month = moment(item.date).month();
+      const year = moment(item.date).year();
+
+      return (month === monthSelected && year === yearSelected && Number(item.amount)) || 0;
+    });
+  }, [monthSelected, yearSelected]);
+
+  const totalBalance = useMemo(() => {
+    return totalGains - totalExpenses;
+  }, [totalGains, totalExpenses]);
+
+  const message = useMemo(() => {
+    if (totalBalance < 0) {
+      return {
+        title: 'Eita',
+        description: 'Sua carteira está negativa.',
+        footerText: 'Tente poupar no próximo mês.',
+        icon: sadImg,
+      };
+    } else if (totalBalance === 0) {
+      return {
+        title: 'Ufa',
+        description: 'Sua carteira está zerada.',
+        footerText: 'Tente poupar.',
+        icon: happyImg,
+      };
+    } else {
+      return {
+        title: 'Muito bem',
+        description: 'Sua carteira está positiva.',
+        footerText: 'Faça algum investimento.',
+        icon: happyImg,
+      };
+    }
+  }, [totalBalance]);
+
   return (
     <Container>
       <ContentHeader title={'Dashboard'} lineColor={'#F7931B'}>
@@ -36,30 +85,30 @@ const Dashboard: React.FC = () => {
       <Content>
         <WalletCard
           title={'saldo'}
-          amount={150.0}
+          amount={totalBalance}
           footerLabel={'atualizado com bases na entrada e saída'}
           icon={'dollar'}
           color={'#4E41F0'}
         />
         <WalletCard
           title={'entradas'}
-          amount={5000.0}
+          amount={totalGains}
           footerLabel={'atualizado com bases na entrada e saída'}
           icon={'arrowUp'}
           color={'#F7931B'}
         />
         <WalletCard
           title={'saída'}
-          amount={4850.0}
+          amount={totalExpenses}
           footerLabel={'atualizado com bases na entrada e saída'}
           icon={'arrowDown'}
           color={'#E44C4E'}
         />
         <MessageBox
-          title={'Muito bem'}
-          description={'Sua carteira está positiva.'}
-          footerText={'Continue assim.'}
-          icon={happyImg}
+          title={message.title}
+          description={message.description}
+          footerText={message.footerText}
+          icon={message.icon}
         />
       </Content>
     </Container>
