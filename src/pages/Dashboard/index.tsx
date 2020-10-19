@@ -2,6 +2,7 @@ import { Container, Content } from './styles';
 import React, { useMemo, useState } from 'react';
 
 import ContentHeader from '../../components/ContentHeader';
+import GraficoPizza from '../../components/GraficoPizza';
 import MessageBox from '../../components/MessageBox';
 import SelectInput from '../../components/SelectInput';
 import WalletCard from '../../components/WalletCard';
@@ -110,6 +111,8 @@ const Dashboard: React.FC = () => {
           footerText={message.footerText}
           icon={message.icon}
         />
+
+        <GraficoPizza />
       </Content>
     </Container>
   );
