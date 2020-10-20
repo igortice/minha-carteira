@@ -3,22 +3,39 @@ import { Container, Legend, LegendContainer, SideLeft, SideRight } from './style
 
 import React from 'react';
 
-const GraficoPizza: React.FC = () => (
+interface IGraficoPizzaProps {
+  data: {
+    name: string;
+    value: number;
+    percent: number;
+    color: string;
+  }[];
+}
+
+const GraficoPizza: React.FC<IGraficoPizzaProps> = ({ data }) => (
   <Container>
     <SideLeft>
       <h2>Relação</h2>
       <LegendContainer>
-        <Legend color={'#F7931B'}>
-          <div>5%</div>
-          <span>entradas</span>
-        </Legend>
-        <Legend color={'#E44C4E'}>
-          <div>95%</div>
-          <span>saídas</span>
-        </Legend>
+        {data.map((ele) => (
+          <Legend key={ele.name} color={ele.color}>
+            <div>{ele.percent}</div>
+            <span>{ele.name}</span>
+          </Legend>
+        ))}
       </LegendContainer>
     </SideLeft>
-    <SideRight></SideRight>
+    <SideRight>
+      <ResponsiveContainer>
+        <PieChart>
+          <Pie data={data} dataKey={'percent'}>
+            {data.map((ele) => (
+              <Cell key={ele.name} fill={ele.color} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+    </SideRight>
   </Container>
 );
 

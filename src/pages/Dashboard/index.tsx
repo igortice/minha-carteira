@@ -19,6 +19,7 @@ const Dashboard: React.FC = () => {
   const [yearSelected, setYearSelected] = useState(moment().year());
 
   const meses = useMemo(() => months.map((ele, idx) => ({ value: idx, label: ele })), []);
+
   const uniqueYears = useMemo(() => {
     return _.uniq([...expenses, ...gains].map((item) => moment(item.date).year())).map((ele) => ({
       value: ele,
@@ -73,6 +74,28 @@ const Dashboard: React.FC = () => {
     }
   }, [totalBalance]);
 
+  const relationExpensesXGains = useMemo(() => {
+    const total = totalGains + totalExpenses;
+
+    const percentGains = (totalGains / total) * 100;
+    const percentExpenses = (totalExpenses / total) * 100;
+
+    return [
+      {
+        name: 'Entradas',
+        value: totalExpenses,
+        percent: Number(percentGains.toFixed(1)) || 0,
+        color: '#E44C4E',
+      },
+      {
+        name: 'Saídas',
+        value: totalExpenses,
+        percent: Number(percentExpenses.toFixed(1)) || 0,
+        color: '#F7931B',
+      },
+    ];
+  }, [totalGains, totalExpenses]);
+
   return (
     <Container>
       <ContentHeader title={'Dashboard'} lineColor={'#F7931B'}>
@@ -112,7 +135,7 @@ const Dashboard: React.FC = () => {
           icon={message.icon}
         />
 
-        <GraficoPizza />
+        <GraficoPizza data={relationExpensesXGains} />
       </Content>
     </Container>
   );
