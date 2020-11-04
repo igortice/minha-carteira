@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 
 import ContentHeader from '../../components/ContentHeader';
 import GraficoPizza from '../../components/GraficoPizza';
+import HistoryBox from '../../components/HistoryBox';
 import MessageBox from '../../components/MessageBox';
 import SelectInput from '../../components/SelectInput';
 import WalletCard from '../../components/WalletCard';
@@ -96,6 +97,50 @@ const Dashboard: React.FC = () => {
     ];
   }, [totalGains, totalExpenses]);
 
+  const historyData = useMemo(() => {
+    return months
+      .map((_, month) => {
+        let amountEntry = 0;
+        gains.forEach((gain) => {
+          const date = new Date(gain.date);
+          const gainMonth = date.getMonth();
+          const gainYear = date.getFullYear();
+
+          if (gainMonth === month && gainYear === yearSelected) {
+            try {
+              amountEntry += Number(gain.amount);
+            } catch (error) {}
+          }
+        });
+
+        let amountOutput = 0;
+        expenses.forEach((expense) => {
+          const date = new Date(expense.date);
+          const expenseMonth = date.getMonth();
+          const expenseYear = date.getFullYear();
+
+          if (expenseMonth === month && expenseYear === yearSelected) {
+            try {
+              amountOutput += Number(expense.amount);
+            } catch (error) {}
+          }
+        });
+
+        return {
+          monthNumber: month,
+          month: months[month].substr(0, 3),
+          amountEntry,
+          amountOutput,
+        };
+      })
+      .filter((item) => {
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+
+        return (yearSelected === currentYear && item.monthNumber <= currentMonth) || yearSelected < currentYear;
+      });
+  }, [yearSelected]);
+
   return (
     <Container>
       <ContentHeader title={'Dashboard'} lineColor={'#F7931B'}>
@@ -136,6 +181,8 @@ const Dashboard: React.FC = () => {
         />
 
         <GraficoPizza data={relationExpensesXGains} />
+
+        <HistoryBox data={historyData} lineColorAmountEntry={'#f7931b'} lineColorAmountOutput={'#e44c4e'} />
       </Content>
     </Container>
   );

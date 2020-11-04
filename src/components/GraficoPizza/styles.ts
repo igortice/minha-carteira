@@ -60,7 +60,7 @@ export const Legend = styled.li<ILegendProps>`
 
     border-radius: 5px;
 
-    font-size: 18px;
+    font-size: 13px;
     line-height: 40px;
     text-align: center;
   }

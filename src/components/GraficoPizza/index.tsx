@@ -19,8 +19,8 @@ const GraficoPizza: React.FC<IGraficoPizzaProps> = ({ data }) => (
       <LegendContainer>
         {data.map((ele) => (
           <Legend key={ele.name} color={ele.color}>
-            <div>{ele.percent}</div>
-            <span>{ele.name}</span>
+            <div>{ele.percent}%</div>
+            <span>{ele.name}%</span>
           </Legend>
         ))}
       </LegendContainer>
